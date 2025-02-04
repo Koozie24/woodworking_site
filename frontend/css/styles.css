@@ -1,0 +1,17 @@
+#top-title{
+    font-size: xx-large;
+    font-weight: bold;
+    text-align: center;
+}
+.top-banner-buttons{
+    display: flex;
+    justify-content: center;
+}
+.top-button-link{
+    margin: 10px;
+    padding: 10px;
+}
+.top-button-link:hover{
+    background-color:green;
+    border: 2px solid black;
+}
