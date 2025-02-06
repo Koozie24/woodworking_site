@@ -1,0 +1,25 @@
+.board-group{
+    border-bottom: 2px solid #FAF9F6;
+    width: 50%;
+    padding: 5px;
+}
+.kerf-message{
+    display: none;
+    margin-bottom: 2%;
+}
+.button-row{
+    padding: 5px;
+}
+h1, h2{
+    color: var(--site_brown);
+    border-bottom: 2px solid var(--site_brown);
+}
+#dimension-form{
+    display: flex;
+    flex-direction: column;
+}
+
+#cut-container, #instruct-container, #radio-container{
+    display: grid;
+    grid-template-columns: 47.5% auto 47.5%;
+}

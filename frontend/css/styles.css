@@ -1,7 +1,31 @@
+/* TOP BANNER STYLES START */
+
+:root{
+    --dark_nav_background: rgb(17 24 39 / var(--tw-bg-opacity, 1));
+    --body_background : rgb(31 41 55 / var(--tw-bg-opacity, 1));
+    --off_white_text : rgb(255 255 255 / var(--tw-text-opacity, 1));
+    --site_brown : #624c2b;
+}
+.top-title-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 1%;
+}
+a{
+    text-decoration: none;
+    color: var(--site_brown);
+}
 #top-title{
+    display: flex;
     font-size: xx-large;
     font-weight: bold;
-    text-align: center;
+    padding: 10px;
+    border: 2px solid var(--dark_nav_background);
+    align-items: center;
+    width: 33%;
+    margin-left: 1%;
+    max-height: 80px;
 }
 .top-banner-buttons{
     display: flex;
@@ -10,8 +34,65 @@
 .top-button-link{
     margin: 10px;
     padding: 10px;
+    border-bottom: 2px solid var(--site_brown);
 }
-.top-button-link:hover{
-    background-color:green;
-    border: 2px solid black;
+
+#top-title:hover, #sign-in:hover{
+    color: #624c2b;
 }
+
+.top-button-link:hover, #sign-in:hover{
+    color: var(--off_white_text);
+    border-bottom: 2px solid var(--off_white_text);
+}
+.top-nav-bar{
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: var(--dark_nav_background)
+}
+.site-logo{
+    width: 25%;
+    height:25%;
+    margin-right: 5px;
+}
+
+.logo-box{
+    width: 50%;
+}
+.sign-in{
+    font-size: large;
+    font-weight: bold;
+    height: auto;
+    margin-right: 1%;
+}
+#sign-in{
+    padding: 10px;
+    border: var(--dark_nav_background);
+    height: auto;
+}
+
+body{
+    /*background-color: #415a77;*/
+    background-color: var(--body_background);
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    transition: transform 0.3s ease;
+}
+#foreground{
+    color: var(--off_white_text);
+    display: grid;
+    grid-template-columns: 12.5% auto;
+    margin-right: 1%;
+}
+
+.side-nav-bar{
+    display: flex;
+    flex-direction: column;
+    margin-right: 2%;
+    padding-left:10px;
+    padding-right: 10px;
+}
+/* TOP BANNER STYLES END */
+/*#a15c2a #cc9c7c #624c2b #9c441a
