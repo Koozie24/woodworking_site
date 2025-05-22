@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=devce-width, inital-scale=1.0">
+    <title>WoodShop.ai</title>
+
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="../static/css/cuts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <!-- Header Banner for site pages -->
+    <nav class="top-nav-bar">
+        <div class="top-title-box">
+
+            <div class="logo-box">
+                <a id="top-title" href="index.html">
+                    <img class="site-logo" src="../static/img/woodwork_erased.png" alt="logo">
+                    Woodshop.ai
+                </a>
+            </div>
+
+            <div class="sign-in">
+                <a id="sign-in" href="../html/login.html">Sign-in</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="foreground">
+
+            <nav class="side-nav-bar">
+                    <a class="top-button-link" href="../html/index.html"><i class="fa fa-home"></i> Home</a>
+                    <a class="top-button-link" href="../html/plans.html"><i class="fa fa-map"></i> Wood Plans</a>
+                    <a class="top-button-link" href="../html/cuts.html"><i class="fa fa-calculator"></i> Cut Optimizer</a>
+                    <a class="top-button-link" href="../html/identify.html"><i class="fa fa-search"></i> Wood ID</a>
+                    <a class="top-button-link" href="../html/index.html"><i class="fa fa-info-circle"></i> About</a>
+            </nav>
+
+            <form method="POST" action="/" id="dimension-form">
+                <h1>Wood Cutting Planner</h1>
+                
+                <div id="radio-container">
+                    <div id="kerf-container">
+                        <!--Kerf thickness slection-->
+                        <div class="kerf-section">
+                            <div id="kerf-info-container">
+                                <button onclick="display_kerf_info()" type="button" id="kerf-info"><i class="fa fa-question"></i></button>
+                                <label><h4><u>Blade Kerf:</u></h4></label>
+                            </div>
+                                <label class="kerf-label">Full (1/8")
+                                <input class="kerf-radio" type="radio" name="kerf-full" value="full" checked>
+                                    <span class='radio-text'></span>
+                            </label>
+                            <label class="kerf-label">Thin (3/32")
+                                <input class="kerf-radio" type="radio" name="kerf-thin" value="thin">
+                                    <span class='radio-text'></span>
+                            </label>
+                        </div>
+                        <p class="kerf-message"><u>The kerf of the blade refers the the thickess of the slot that a blade will cut.</u> If the printing on the face of your blade is still present, it should display the kerf size. It is important to account for this thickness when measuring your cuts.
+                            <br><br>Let's say you have a piece of stock that is 3 inches in with and you want to cut it down the middle with a full kerf blade. At first you might think that 
+                            the resulting cut yields two 1 1/2" pieces, right? 
+                            <br><br>Well, if this is you, then you will be a little disappointed. You didn't account for the <strong>blade kerf</strong> and will actually end up with two 1 7/16" pieces. 
+                            <u><i>This occurs because the blade kerf will cut away the width of itself from the material in the cutting piece.</u></i>
+                        </p>
+                    </div>
+
+                    <div class="grid-spacer"></div>
+
+                    <div id="unit-container">
+                        <!-- Unit selection -->
+                        <div class="units-section">
+                            <label><h4><u>Units:</u></label></h4>
+                        <label class="unit-label">Imperial
+                            <input type="radio" name="units" value="imperial" class="unit-radio" id="imperial-radio" checked>
+                                <span class='radio-text'></span>
+                        </label>
+                        <label class="unit-label">Metric
+                            <input type="radio" name="units" value="metric" class="unit-radio" id="metric-radio">
+                                <span class='radio-text'></span>
+                        </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!--This is where you will find instructions-->
+                <div id="instruct-container">
+                    
+                    <div id="stock-material-instructions">
+                        <div class="intructions-div">
+                            <h2>Enter Your Stock Dimensions:</h2>
+                            <p id="imperial-instructions">Enter the whole-inch portion of your measurement in the “Inches” field and then select the fraction from the dropdown.
+                                <br>For example, if your board is 13 7/32″ in length, type <strong>13</strong> into the field and choose <strong>7/32</strong> from the dropdown.
+
+                                <br><br><i><u>Decimal inputs for imperial dimensions will be rounded down to the nearest whole number.</u> Example: 12.4 or 12.99 will round to 12. The fractional selection will be kept.</i>
+                            </p>
+                        </div>
+
+                        <div class="intructions-div">
+                            <p id="metric-instructions">Enter the decimal mesaurement of your dimension in the corresponding field.
+                                <br>For example, if your board is 13cm and 5.5mm in length, type <strong>13.55</strong> into the length field.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-spacer"></div>
+
+                    <div id="desired-cut-instructions">
+                        <h2>Enter Your Required Cuts:</h2>
+                        <p>You can pick a cut list from one of the wood plans on our website or you can manually enter your cut list below.</p>
+                    </div>
+                </div>
+                <h2 id="imperial-header">Imperial Dimensions</h2>
+                <h2 id="metric-header">Metric Dimensions</h2>
+
+                <div id="cut-container">
+                    <div id="stock-material">
+                        <!-- Container for Imperial boards -->
+                        <div id="imperial-container">
+                            <!-- Initial board inputs -->
+                            <div class="board-group">
+                                <strong><u>Board 1:</u></strong><br><br>
+
+                                <div class="imperial-grid-container">
+                                    <div class="dimension-labels">
+                                        <label for="length-whole-1">Length <span class="imperial-label">(inches): </span> <span class="metric-label">(cm): </span></label>
+                                        <label for="width-whole-1">Width <span class="imperial-label">(inches): </span> <span class="metric-label">(cm): </span></label>
+                                        <label for="height-whole-1">Height <span class="imperial-label">(inches): </span> <span class="metric-label">(cm): </span></label>
+                                    </div>
+
+                                    <div class="dimension-input-area">
+                                        <input type="number" class="number-input" id="length-whole-1" name="length_whole[]" placeholder="e.g. 5" min="0" required>
+                                        <input type="number" class="number-input" id="width-whole-1" name="width_whole[]" placeholder="e.g. 2" min="0" required>
+                                        <input type="number" class="number-input" id="height-whole-1" name="height_whole[]" placeholder="e.g. 1" min="0" required>
+                                    </div>
+
+                                    <div class="dimension-fraction-selection">
+                                        <select class="fraction-select" id="length-fraction-1" name="length_fraction[]">
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                        <select class="fraction-select" id="width-fraction-1" name="width_fraction[]" >
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                        <select class="fraction-select" id="height-fraction-1" name="height_fraction[]">
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button onclick="new_board_entry()" type="button" class="board-btn" id="add-board-button"><i class="fa fa-plus"></i> Add Another Board</button>
+                            <button onclick="remove_board()" type="button" class="board-btn" id="remove-board-button"><i class="fa fa-minus"></i> Remove Board</button>
+                        </div>
+
+                    </div>
+
+                    <div class="grid-spacer"></div>
+
+                    <div id="required-cuts">
+
+                        <div class="plan-container">
+                            <div class="pick-a-plan">
+                                <div id="plan-container">
+                                    <button onclick="display_plan_info()" type="button" id="plan-info"><i class="fa fa-question"></i></button>
+                                    <strong><u>(Optional) Pick a Plan:</u></strong>
+                                </div>
+                                <select id="plan-select" name="plan_select[]"></select>
+                            </div>
+
+                            <p class="plan-message">You may pick a plan from the drop down list to import a cut list. You may add additional cuts to this list by manually including them after selecting your cut list. See your account tab to add a wood plan and import a cut list from your own wood plans. </p>
+                        </div>
+
+                        <!--Grid container for imperial cut list-->
+                         <div id="imperial-cut-container">
+
+                            <!-- Initial cut inputs -->
+                            <div class="board-group">
+                                <strong><u>Cut Type 1:</u></strong><br><br>
+
+                                <div class="imperial-grid-container">
+                                    <div class="dimension-labels">
+                                        <label for="cut-quantity-whole-1">Cut Quantity:</label>
+                                        <label for="length-cut-whole-1">Length (inches):</label>
+                                        <label for="width-cut-whole-1">Width (inches): </label>
+                                        <label for="height-cut-whole-1">Height (inches):</label>
+                                    </div>
+
+                                    <div class="dimension-input-area">
+                                        <input type="number" class="number-input" id="cut-quantity-whole-1" name="quantity" placeholder="e.g. 8" min="1" required>
+                                        <input type="number" class="number-input" id="length-cut-whole-1" name="length_whole[]" placeholder="e.g. 5" min="0" required>
+                                        <input type="number" class="number-input" id="width-cut-whole-1" name="width_whole[]" placeholder="e.g. 2" min="0" required>
+                                        <input type="number" class="number-input" id="height-cut-whole-1" name="height_whole[]" placeholder="e.g. 1" min="0" required>
+                                    </div>
+
+                                    <div class="dimension-fraction-selection">
+                                        <select class="fraction-select" id="hidden-select-1" name="hidden_select[]"></select>
+                                        <select class="fraction-select" id="length-cut-fraction-1" name="length_fraction[]">
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                        <select class="fraction-select" id="width-cut-fraction-1" name="width_fraction[]" >
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                        <select class="fraction-select" id="height-cut-fraction-1" name="height_fraction[]">
+                                            <option value="0">0</option>
+                                            <option value="0.03125">1/32</option>
+                                            <option value="0.0625">1/16</option>
+                                            <option value="0.09375">3/32</option>
+                                            <option value="0.125">1/8</option>
+                                            <option value="0.15625">5/32</option>
+                                            <option value="0.1875">3/16</option>
+                                            <option value="0.21875">7/32</option>
+                                            <option value="0.25">1/4</option>
+                                            <option value="0.28125">9/32</option>
+                                            <option value="0.3125">5/16</option>
+                                            <option value="0.34375">11/32</option>
+                                            <option value="0.375">3/8</option>
+                                            <option value="0.40625">13/32</option>
+                                            <option value="0.4375">7/16</option>
+                                            <option value="0.46875">15/32</option>
+                                            <option value="0.5">1/2</option>
+                                            <option value="0.53125">17/32</option>
+                                            <option value="0.5625">9/16</option>
+                                            <option value="0.59375">19/32</option>
+                                            <option value="0.625">5/8</option>
+                                            <option value="0.65625">21/32</option>
+                                            <option value="0.6875">11/16</option>
+                                            <option value="0.71875">23/32</option>
+                                            <option value="0.75">3/4</option>
+                                            <option value="0.78125">25/32</option>
+                                            <option value="0.8125">13/16</option>
+                                            <option value="0.84375">27/32</option>
+                                            <option value="0.875">7/8</option>
+                                            <option value="0.90625">29/32</option>
+                                            <option value="0.9375">15/16</option>
+                                            <option value="0.96875">31/32</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Container for boards: METRIC -->
+                        <div id="metric-cut-container" style="display: none;">
+                            <div class="board-group">
+                                <strong><u>Cut Type 1:</u></strong><br><br>
+                                
+                                <div class="metric-grid-container">
+                                    <div class="metric-label-div">
+                                        <label for="cut-quantity-metric-1">Cut Quantity:</label>
+                                        <!-- LENGTH in centimeters, for example -->
+                                        <label for="length-cut-metric-1">Length (cm):</label>
+                                        <!-- WIDTH in cm -->
+                                        <label for="width-cut-metric-1">Width (cm): </label>
+                                        <!-- HEIGHT in cm -->
+                                        <label for="height-cut-metric-1">Height (cm):</label>
+                                    </div>
+
+                                    <div class="metric-number-div">
+                                        <input type="number" class="number-input" id="cut-quantity-metric-1" name="quantity" placeholder="e.g. 8" min="1">
+                                        <!-- LENGTH in centimeters, for example -->
+                                        <input type="number" step="0.01" class="number-input" id="length-cut-metric-1" name="length_cm[]" placeholder="e.g. 12.7" min="0">
+                                        <!-- WIDTH in cm -->
+                                        <input type="number" step="0.01" class="number-input" id="width-cut-metric-1" name="width_cm[]" placeholder="e.g. 5.08" min="0">
+                                        <!-- HEIGHT in cm -->
+                                        <input type="number" step="0.01" class="number-input" id="height-cut-metric-1" name="height_cm[]" placeholder="e.g. 2.54" min="0">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button onclick="new_cut_entry()" type="button" class="board-btn" id="add-cut-button"><i class="fa fa-plus"></i> Add Cut Type</button>
+                            <button onclick="remove_cut()" type="button" class="board-btn" id="remove-cut-button"><i class="fa fa-minus"></i> Remove Cut Type</button>
+                        </div>
+
+                    </div>
+
+                    
+
+                </div>
+
+                <!-- submit button -->
+                <div class="button-row" id="bottom-btn-row">
+                    <button type="submit" class="board-btn" id="submit-button"><i class="fa fa-paper-plane"></i> Find My Optimal Cuts</button>
+                </div>
+            </form>
+    </div>  
+    <script type="text/javascript" src="../static/src/cuts.js"></script>
+</body>
+
+<!--To Fix just have labels change and fractional inputs set to invisible if metric is selected. 
+Take decimal input for both and round down to nearest whole number if a imperial decimal is given -->
