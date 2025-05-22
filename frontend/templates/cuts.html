@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=devce-width, inital-scale=1.0">
     <title>WoodShop.ai</title>
 
-    <link rel="stylesheet" href="../static/css/styles.css">
-    <link rel="stylesheet" href="../static/css/cuts.css">
+    <link rel="stylesheet" href="./static/css/styles.css">
+    <link rel="stylesheet" href="./static/css/cuts.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
@@ -17,29 +17,29 @@
         <div class="top-title-box">
 
             <div class="logo-box">
-                <a id="top-title" href="index.html">
-                    <img class="site-logo" src="../static/img/woodwork_erased.png" alt="logo">
+                <a id="top-title" href="/">
+                    <img class="site-logo" src="./static/img/woodwork_erased.png" alt="logo">
                     Woodshop.ai
                 </a>
             </div>
 
             <div class="sign-in">
-                <a id="sign-in" href="../html/login.html">Sign-in</a>
+                <a id="sign-in" href="/login">Sign-in</a>
             </div>
         </div>
     </nav>
 
     <div id="foreground">
 
-            <nav class="side-nav-bar">
-                    <a class="top-button-link" href="../html/index.html"><i class="fa fa-home"></i> Home</a>
-                    <a class="top-button-link" href="../html/plans.html"><i class="fa fa-map"></i> Wood Plans</a>
-                    <a class="top-button-link" href="../html/cuts.html"><i class="fa fa-calculator"></i> Cut Optimizer</a>
-                    <a class="top-button-link" href="../html/identify.html"><i class="fa fa-search"></i> Wood ID</a>
-                    <a class="top-button-link" href="../html/index.html"><i class="fa fa-info-circle"></i> About</a>
-            </nav>
+        <nav class="side-nav-bar">
+            <a class="top-button-link" href="/"><i class="fa fa-home"></i> Home</a>
+            <a class="top-button-link" href="/plans"><i class="fa fa-map"></i> Wood Plans</a>
+            <a class="top-button-link" href="/cuts"><i class="fa fa-calculator"></i> Cut Optimizer</a>
+            <a class="top-button-link" href="/identify"><i class="fa fa-search"></i> Wood ID</a>
+            <a class="top-button-link" href="/"><i class="fa fa-info-circle"></i> About</a>
+        </nav>
 
-            <form method="POST" action="/" id="dimension-form">
+            <form method="POST" action="/handle_submit_cut_form" id="dimension-form">
                 <h1>Wood Cutting Planner</h1>
                 
                 <div id="radio-container">
@@ -51,16 +51,16 @@
                                 <label><h4><u>Blade Kerf:</u></h4></label>
                             </div>
                                 <label class="kerf-label">Full (1/8")
-                                <input class="kerf-radio" type="radio" name="kerf-full" value="full" checked>
+                                <input class="kerf-radio" type="radio" name="kerf-type" value="full" checked>
                                     <span class='radio-text'></span>
                             </label>
                             <label class="kerf-label">Thin (3/32")
-                                <input class="kerf-radio" type="radio" name="kerf-thin" value="thin">
+                                <input class="kerf-radio" type="radio" name="kerf-type" value="thin">
                                     <span class='radio-text'></span>
                             </label>
                         </div>
                         <p class="kerf-message"><u>The kerf of the blade refers the the thickess of the slot that a blade will cut.</u> If the printing on the face of your blade is still present, it should display the kerf size. It is important to account for this thickness when measuring your cuts.
-                            <br><br>Let's say you have a piece of stock that is 3 inches in with and you want to cut it down the middle with a full kerf blade. At first you might think that 
+                            <br><br>Let's say you have a piece of stock that is 3 inches in width and you want to cut it down the middle with a full kerf blade. At first you might think that 
                             the resulting cut yields two 1 1/2" pieces, right? 
                             <br><br>Well, if this is you, then you will be a little disappointed. You didn't account for the <strong>blade kerf</strong> and will actually end up with two 1 7/16" pieces. 
                             <u><i>This occurs because the blade kerf will cut away the width of itself from the material in the cutting piece.</u></i>
@@ -445,7 +445,7 @@
                 </div>
             </form>
     </div>  
-    <script type="text/javascript" src="../static/src/cuts.js"></script>
+    <script type="text/javascript" src="./static/src/cuts.js"></script>
 </body>
 
 <!--To Fix just have labels change and fractional inputs set to invisible if metric is selected. 

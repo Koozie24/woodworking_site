@@ -26,6 +26,8 @@
 .kerf-message, .plan-message{
     display: none;
     margin-bottom: 2%;
+    border: 2px solid var(--site_brown);
+    padding: 5px
 }
 
 .plan-message{
