@@ -108,20 +108,20 @@ function add_imperial_cut(){
 
                 <div class="dimension-input-area">
                     <input type="number" class="number-input" id="cut-quantity-whole-${get_index}" name="quantity[]" min="1" required>
-                    <input type="number" class="number-input" id="length-cut-whole-${get_index}" name="length_whole[]" min="0" required>
-                    <input type="number" class="number-input" id="width-cut-whole-${get_index}" name="width_whole[]" min="0" required>
-                    <input type="number" class="number-input" id="height-cut-whole-${get_index}" name="height_whole[]" min="0" required>
+                    <input type="number" class="number-input" id="length-cut-whole-${get_index}" name="cut_length_whole[]" min="0" required>
+                    <input type="number" class="number-input" id="width-cut-whole-${get_index}" name="cut_width_whole[]" min="0" required>
+                    <input type="number" class="number-input" id="height-cut-whole-${get_index}" name="cut_height_whole[]" min="0" required>
                 </div>
 
                 <div class="dimension-fraction-selection">
                     <select class="fraction-select" id="hidden-select-${get_index}" name="hidden_select[]"></select>
-                    <select class="fraction-select" id="length-cut-fraction-${get_index}" name="length_fraction[]">
+                    <select class="fraction-select" id="length-cut-fraction-${get_index}" name="cut_length_fraction[]">
                         ${generate_fractions()}
                     </select>
-                    <select class="fraction-select" id="width-cut-fraction-${get_index}" name="width_fraction[]" >
+                    <select class="fraction-select" id="width-cut-fraction-${get_index}" name="cut_width_fraction[]" >
                         ${generate_fractions()}
                     </select>
-                    <select class="fraction-select" id="height-cut-fraction-${get_index}" name="height_fraction[]">
+                    <select class="fraction-select" id="height-cut-fraction-${get_index}" name="cut_height_fraction[]">
                         ${generate_fractions()}
                     </select>
                 </div>
