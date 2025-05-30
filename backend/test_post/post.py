@@ -21,8 +21,7 @@ for cut in cuts:
         if(curr_cut_len <= stock[0] and curr_cut_width <= stock[1]): #if cut len and width less than max stock len and width
             possible_matchings.append([cuts.index(cut), stocks.index(stock)])#candidate found, store it. has shape [[cut, stock],]
 
-print(possible_matchings) #set of all cuts that match to all stocks
-print()
+print("all possible matchings: ",possible_matchings) #set of all cuts that match to all stocks
 
 only_possible_matching = []
 index_to_remove = []
@@ -43,8 +42,8 @@ index_to_remove = sorted(index_to_remove, reverse=True) #reverse index list to n
 for index in index_to_remove: #remove cuts with only one match from list
     del possible_matchings[index]
     
-print(possible_matchings) #cuts with multiple matchings
-print(only_possible_matching) #cuts that must come out of a given stock
+print("Cuts that match to multiple stock: :", possible_matchings) #cuts with multiple matchings
+print("Cuts that only match to one stock: :", only_possible_matching) #cuts that must come out of a given stock
 
 remaining_stock = stocks.copy() #get copy of stock list
 completed_cuts = []
