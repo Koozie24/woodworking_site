@@ -42,6 +42,14 @@ def form_board_dimensions(whole_len, whole_width, whole_height, frac_len, frac_w
         
     return board_list
 
+def get_kerf_as_float(kerf_size):
+    if(kerf_size == "thin"):
+        kerf_thickness = 0.09375
+    else:
+        kerf_thickness = 0.125
+    
+    return kerf_thickness
+
 @app.route('/handle_submit_cut_form', methods=['POST'])
 def handle_submit_cut_form():
     board_lengths_whole = request.form.getlist('length_whole[]')
@@ -60,37 +68,22 @@ def handle_submit_cut_form():
     cut_height_fraction = request.form.getlist("cut_height_fraction[]")
     
     cut_quantitiy = request.form.getlist('quantity[]')
-    kerf = request.form.get('kerf-type')
+    kerf_type = request.form.get('kerf-type')
     units = request.form.get('units')
 
-    stock_list = form_board_dimensions(board_lengths_whole, board_widths_whole, board_heights_whole, board_length_fraction, board_width_fraction, board_height_fraction)
-    cut_list = form_board_dimensions(cut_lengths_whole, cut_widths_whole, cut_heights_whole, cut_length_fraction, cut_width_fraction, cut_height_fraction, cut=True, quantity=cut_quantitiy)
-    print("Whole lengths:", board_lengths_whole)
-    print("Frac lengths:", board_length_fraction)
-    
-    print("Whole widths:", board_widths_whole)
-    print("frac widths:", board_width_fraction)
-    
-    print("Whole heights:", board_heights_whole)
-    print("frac heights:", board_height_fraction)
-    
-    print("cut length:", cut_lengths_whole)
-    print("frac length:", cut_length_fraction)
-    
-    print("cut width:", cut_widths_whole)
-    print("frac width:", cut_width_fraction)
-    
-    print("cut height:", cut_heights_whole)
-    print("frac height:", cut_height_fraction)
+    stock_list = form_board_dimensions(board_lengths_whole, board_widths_whole, board_heights_whole, board_length_fraction, board_width_fraction, board_height_fraction) #get list of lists of stock material - dimensions: [length, width, height]
+    cut_list = form_board_dimensions(cut_lengths_whole, cut_widths_whole, cut_heights_whole, cut_length_fraction, cut_width_fraction, cut_height_fraction, cut=True, quantity=cut_quantitiy) #get list of lists of required cuts - dimensions: [quantity, length, width, height]
 
-    print("Cut quantity:", cut_quantitiy)
-    print("Kerf:", kerf)
+    print("Kerf:", kerf_type)
     print("Units:", units)
+    
+    kerf_size = get_kerf_as_float(kerf_type) #get decimal value of kerf thickness
     
     print("Stock Material:", stock_list)
     print("Cuts Needed:", cut_list)
     
     return render_template('cuts.html')
+
 if __name__ == "__main__":
     print("Running Flask server...")
     app.run(debug=True)
