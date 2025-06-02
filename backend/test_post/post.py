@@ -90,7 +90,7 @@ def recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts,
     possible_matchings = find_possible_matching(cuts_remaining, stock_remaining) #get list of possible matching of cuts
 
     if(len(cuts_remaining) == 0 or len(stock_remaining) == 0 or not possible_matchings): #base case, where either no cuts or no stock remain or no matches possible
-        return completed_cuts, remaining_stock, cuts_remaining
+        return completed_cuts, stock_remaining, cuts_remaining
     
     print()
     print("depth: ", depth)
@@ -111,7 +111,7 @@ def recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts,
             current_cut = match[0] 
             required_stock = match[1]
             
-            completed_cuts, remaining_stock = single_matching_cut_stock_to_size(current_cut, required_stock, stock_remaining, kerf) #calculate/handle cuts and return leftover to stock
+            completed_cuts, stock_remaining = single_matching_cut_stock_to_size(current_cut, required_stock, stock_remaining, kerf) #calculate/handle cuts and return leftover to stock
             cuts_remaining = remove_completd_from_remaining_cuts(completed_cuts, cuts_remaining) #remove completed cuts from cuts remaining
     else: #otherwise, zero single matches evaluate multiple matchings
         current_cut_to_evaluate_matchings = multiple_matchings[0][0] #get the index of the first cut in multiple matchings
@@ -136,7 +136,7 @@ def recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts,
             print(stock_remaining[match[1]])
             width_of_current_stock = stock_remaining[match[1]][1] #get current width
             length_diff = stock_remaining[match[1]][0] - cuts_remaining[match[0]][0] #get length diff
-            possible_stock_widths.append([width_of_current_stock, length_diff, match[1]]) #store
+            possible_stock_widths.append([width_of_current_stock, length_diff, match[0], match[1]]) #store
 
 
         possible_stock_widths = sorted(possible_stock_widths) #sort by width, smallest to largest
@@ -144,26 +144,31 @@ def recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts,
         print("sorted by width:" , possible_stock_widths)
 
         smallest_width = possible_stock_widths[0][0]
+        print("min wid", smallest_width)
         tie_count = 0
-        for board in possible_stock_widths:
-            if(board[0] <= smallest_width):
+        for i in range (len(possible_stock_widths)):
+            print("board 0:", possible_stock_widths[i][0])
+            if(possible_stock_widths[i][0] <= smallest_width and i > 0):
                 tie_count += 1
         
         if(tie_count > 0):
             print("we need to check leftover lengths")
         
         else:
-            print("handle cutting first board in posisble_stock_widths")
-
+            current_cut = possible_stock_widths[0][2]
+            required_stock = possible_stock_widths[0][3]
+            
+            completed_cuts, stock_remaining = single_matching_cut_stock_to_size(current_cut, required_stock, stock_remaining, kerf)
+            cuts_remaining = remove_completd_from_remaining_cuts(completed_cuts, cuts_remaining) #remove completed cuts from cuts remaining
+            print(completed_cuts)
+            print(stock_remaining)
+            print(cuts_remaining)
             #evaluate the best match - what is the best match? minimizing leftover from remaining stock?
             
     
     fart = input()
     depth += 1
-    recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts, kerf, depth)
-
-
-#print(cuts)
+    return recursive_greedy_cut_solver(cuts_remaining, stock_remaining, completed_cuts, kerf, depth)
 
 print("cuts: ", cuts)
 print("stocks: ", stocks)
