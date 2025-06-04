@@ -26,6 +26,7 @@ def find_possible_matching(cuts_remaining, stocks):
         for stock in stocks: #check each stock len + width
             if(curr_cut_len <= stock[0] and curr_cut_width <= stock[1]): #if cut len and width less than max stock len and width
                 possible_matchings.append([cuts_remaining.index(cut), stocks.index(stock)])#candidate found, store it. has shape [[cut, stock],]
+    print(possible_matchings)
     return possible_matchings
 
 def find_single_matching_cuts(possible_matchings):
@@ -215,8 +216,6 @@ print("Starting Stocks: ", stocks)
 my_finished_cuts, leftover_stock, cuts_remaining = recursive_greedy_cut_solver(cuts, stocks, [], kerf)
 
 print()
-
-print(" after recursive function completes")
 
 print("finished: ", my_finished_cuts)
 print("leftover stock: ", leftover_stock)

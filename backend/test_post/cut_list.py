@@ -1,89 +1,151 @@
-from flask import Flask, render_template, request
-import os 
+stocks = {0 : {'length': 96, 
+               'width': 5, 
+               'height': 1.5, 
+               }, 
+          1 : {'length': 96,
+               'width': 3.5,
+               'height': 1.5,
+               }
+        }
+cuts = {0 : {'length': 24, 
+            'width': 4.5, 
+            'height': 1.5, 
+            }, 
+        1 : {'length': 72,
+            'width': 3,
+            'height': 1.5,
+            },
+        2 : {'length': 48, 
+            'width': 4, 
+            'height': 1.5, 
+            }, 
+        3 : {'length': 12,
+            'width': 3.5,
+            'height': 1.5,
+            }
+    }
 
-app = Flask(__name__)
+#cuts = [[24, 4.5, 1.5], [72, 3, 1.5], [48, 4, 1.5], [12, 3.5, 1.5]]
 
-TEMPLATES_DIR = os.path.abspath("frontend/templates")
-STATIC_DIR = os.path.abspath("frontend/static")
-app= Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
- 
-#defining routes for html pages in templates
-@app.route('/')
-def home():
-    return render_template('index.html')
-@app.route('/cuts')
-def cuts():
-    return render_template('cuts.html')
-@app.route('/identify')
-def identify():
-    return render_template('identify.html')
-@app.route('/login')
-def login():
-    return render_template('login.html')
-@app.route('/plans')
-def plans():
-    return render_template('plans.html')
+def get_kerf_input_from_user():
+    #prompt user to get kerf size
+    while(1):
+        print("Kerf size (thin or full): ", end=None)
+        kerf_inp = input()
+        if(kerf_inp == 'thin' or kerf_inp == 'Thin'):
+            kerf = 0.09375
+            break
+        elif(kerf_inp =='full' or kerf_inp == 'Full'):
+            kerf = 0.125
+            break
+    return kerf
 
-#helper function to take inputs from cut optimizer form and form board and cut dimensions. returns a list of lists. Each sublist is a dimension in L x W x H.
-def form_board_dimensions(whole_len, whole_width, whole_height, frac_len, frac_width, frac_height, cut=False, quantity=0):
-    n = len(whole_len) #get number of boards input by user
-    board_list = [] #init empty container
+class Stock_Wood:
+    _stock_id = 0
+
+    def __init__(self, length, width, height):
+        self.id = Stock_Wood._stock_id
+        Stock_Wood._stock_id += 1
+
+        self.length = length
+        self.width = width
+        self.height = height 
+        self.is_original_stock = True
+        self.parent_stock_index = None
+        self.cuts_made_from_this_stock = {}
     
-    for i in range(n): #iterate over number of boards input
-        length = float(whole_len[i]) + float(frac_len[i]) #conjoin fraction + whole number for each dimension
-        width = float(whole_width[i]) + float(frac_width[i])
-        height = float(whole_height[i]) + float(frac_height[i])
-        if(cut == False): #default argument for stock dimensions
-            current = [length, width, height] #initialize as a list
-        else: #otherwise cut dimensions
-            current = [int(quantity[i]), length, width, height] #initialize as a list
+    def check_if_required_cut_fits_stock(self, cut):
+        if(cut.length <= self.length and cut.width <= self.width and cut.height <= self.height):
+            return (cut, self)
+        else:
+            return (False, False)
         
-        board_list.append(current) #append to list of lists.
-        
-    return board_list
+    def cut_stock_to_size(self, cut, kerf):
+        '''
+            Function takes three arguments self, cut, kerf and shortens the length of self stock. Also checks if the
+            width of the cut is less than that of the stock. If so, we cut away from the width and create a new stock wood
+            object using the cutoff piece. 
+        '''
+        self.length -= (cut.length + kerf)
+        self.is_original_stock = False
+        self.cuts_made_from_this_stock[cut.id] = cut
 
-def get_kerf_as_float(kerf_size):
-    if(kerf_size == "thin"):
-        kerf_thickness = 0.09375
-    else:
-        kerf_thickness = 0.125
-    
-    return kerf_thickness
+        if(cut.width < self.width):
+            remaining_width = self.width - (cut.width + kerf)
+            cutoff_piece = Stock_Wood(cut.length, remaining_width, self.height)
 
-@app.route('/handle_submit_cut_form', methods=['POST'])
-def handle_submit_cut_form():
-    board_lengths_whole = request.form.getlist('length_whole[]')
-    board_length_fraction = request.form.getlist("length_fraction[]")
-    cut_lengths_whole = request.form.getlist('cut_length_whole[]')
-    cut_length_fraction = request.form.getlist("cut_length_fraction[]")
+        return cutoff_piece
     
-    board_widths_whole = request.form.getlist('width_whole[]')
-    board_width_fraction = request.form.getlist('width_fraction[]')
-    cut_widths_whole = request.form.getlist("cut_width_whole[]")
-    cut_width_fraction = request.form.getlist("cut_width_fraction[]")
-    
-    board_heights_whole = request.form.getlist('height_whole[]')
-    board_height_fraction = request.form.getlist("height_fraction[]")
-    cut_heights_whole = request.form.getlist('cut_height_whole[]')
-    cut_height_fraction = request.form.getlist("cut_height_fraction[]")
-    
-    cut_quantitiy = request.form.getlist('quantity[]')
-    kerf_type = request.form.get('kerf-type')
-    units = request.form.get('units')
+class Desired_Cut:
+    _cut_id = 0
+    def __init__(self, length, width, height):
+        self.id = Desired_Cut._cut_id
+        Desired_Cut._cut_id += 1
 
-    stock_list = form_board_dimensions(board_lengths_whole, board_widths_whole, board_heights_whole, board_length_fraction, board_width_fraction, board_height_fraction) #get list of lists of stock material - dimensions: [length, width, height]
-    cut_list = form_board_dimensions(cut_lengths_whole, cut_widths_whole, cut_heights_whole, cut_length_fraction, cut_width_fraction, cut_height_fraction, cut=True, quantity=cut_quantitiy) #get list of lists of required cuts - dimensions: [quantity, length, width, height]
+        self.length = length
+        self.width = width
+        self.height = height
+        self.is_completed_cut = False
+        self.no_possible_matching = False
 
-    print("Kerf:", kerf_type)
-    print("Units:", units)
+class Cut_Optimizer:
+    def __init__(self, cuts, stocks):
+        self.cuts = cuts
+        self.stocks = stocks
+        self.matches = {}
+        self.single_matching = {}
+        self.multiple_matching = {}
     
-    kerf_size = get_kerf_as_float(kerf_type) #get decimal value of kerf thickness
-    
-    print("Stock Material:", stock_list)
-    print("Cuts Needed:", cut_list)
-    
-    return render_template('cuts.html')
+    def find_all_possible_matchings(self):
+        match_count = 0
+        for stock in self.stocks.values():
+            for cut in cut_objects.values():
+                matching_pair = stock.check_if_required_cut_fits_stock(cut)
+                if(False not in matching_pair):
+                    self.matches[match_count] = [cut.id, stock.id]
+                    match_count += 1
+
+        self.check_for_unmatchable_cuts()
+        return self.matches
+
+    def check_for_unmatchable_cuts(self):
+        matched_value_ids = [match[0] for match in self.matches.values()] #comprehension to get id of each cut in matching
+
+        for cut in self.cuts.values():
+            if(cut.id not in matched_value_ids):
+                cut.no_possible_matching = True
+
+    def seperate_single_and_multiple_matching_cuts(self):
+        for key, value in self.matches.items():
+            match_counter = 0
+            for item in self.matches.values():
+                if item[0] == value[0]:
+                    match_counter += 1
+
+            if match_counter == 1:
+                self.single_matching[key] = value
+            else:
+                self.multiple_matching[key] = value
+
+def initialize_and_store_objects_from_dictionary(dict, class_to_call):
+    object_storage = {}
+    for key, item in dict.items():
+        object_storage[key] = class_to_call(item['length'], item['width'], item['height'])
+    return object_storage
+
 
 if __name__ == "__main__":
-    print("Running Flask server...")
-    app.run(debug=True)
+    #kerf = get_kerf_input_from_user()
+
+    stock_objects = initialize_and_store_objects_from_dictionary(stocks, Stock_Wood)
+    cut_objects = initialize_and_store_objects_from_dictionary(cuts, Desired_Cut)
+
+    cut_optimizer = Cut_Optimizer(cut_objects, stock_objects)
+    all_matchings = cut_optimizer.find_all_possible_matchings()
+
+    cut_optimizer.seperate_single_and_multiple_matching_cuts()
+
+    print(cut_optimizer.single_matching)
+    print(cut_optimizer.multiple_matching)
+
+    print(all_matchings)
