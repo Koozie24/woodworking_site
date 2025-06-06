@@ -27,19 +27,6 @@ cuts = {0 : {'length': 24,
 
 #cuts = [[24, 4.5, 1.5], [72, 3, 1.5], [48, 4, 1.5], [12, 3.5, 1.5]]
 
-def get_kerf_input_from_user():
-    #prompt user to get kerf size
-    while(1):
-        print("Kerf size (thin or full): ", end=None)
-        kerf_inp = input()
-        if(kerf_inp == 'thin' or kerf_inp == 'Thin'):
-            kerf = 0.09375
-            break
-        elif(kerf_inp =='full' or kerf_inp == 'Full'):
-            kerf = 0.125
-            break
-    return kerf
-
 class Stock_Wood:
     _stock_id = 0
 
@@ -53,25 +40,40 @@ class Stock_Wood:
         self.is_original_stock = True
         self.parent_stock_index = None
         self.cuts_made_from_this_stock = {}
+        self.kerf = self.get_kerf_input_from_user()
     
+    def get_kerf_input_from_user():
+        #prompt user to get kerf size
+        while(1):
+            print("Kerf size (thin or full): ", end=None)
+            kerf_inp = input()
+            if(kerf_inp == 'thin' or kerf_inp == 'Thin'):
+                kerf = 0.09375
+                break
+            elif(kerf_inp =='full' or kerf_inp == 'Full'):
+                kerf = 0.125
+                break
+        return kerf
+
     def check_if_required_cut_fits_stock(self, cut):
         if(cut.length <= self.length and cut.width <= self.width and cut.height <= self.height):
             return (cut, self)
         else:
             return (False, False)
         
-    def cut_stock_to_size(self, cut, kerf):
+    def cut_stock_to_size(self, cut):
         '''
-            Function takes three arguments self, cut, kerf and shortens the length of self stock. Also checks if the
+            Function takes two arguments self, cut and shortens the length of self stock. Also checks if the
             width of the cut is less than that of the stock. If so, we cut away from the width and create a new stock wood
             object using the cutoff piece. 
         '''
-        self.length -= (cut.length + kerf)
+        self.length -= (cut.length + self.kerf)
         self.is_original_stock = False
         self.cuts_made_from_this_stock[cut.id] = cut
-
+        cutoff_piece = None
+        
         if(cut.width < self.width):
-            remaining_width = self.width - (cut.width + kerf)
+            remaining_width = self.width - (cut.width + self.kerf)
             cutoff_piece = Stock_Wood(cut.length, remaining_width, self.height)
 
         return cutoff_piece
@@ -95,11 +97,12 @@ class Cut_Optimizer:
         self.matches = {}
         self.single_matching = {}
         self.multiple_matching = {}
-    
+        self.completed_cuts = {}
+        
     def find_all_possible_matchings(self):
         match_count = 0
         for stock in self.stocks.values():
-            for cut in cut_objects.values():
+            for cut in self.cuts.values():
                 matching_pair = stock.check_if_required_cut_fits_stock(cut)
                 if(False not in matching_pair):
                     self.matches[match_count] = [cut.id, stock.id]
@@ -126,6 +129,22 @@ class Cut_Optimizer:
                 self.single_matching[key] = value
             else:
                 self.multiple_matching[key] = value
+    
+    def recursive_cut_solver(self):
+        
+        self.matches = self.find_all_possible_matchings()
+
+        if(len(self.cuts) == 0 or len(self.stocks) == 0 or not self.matches):
+            return self.completed_cuts, self.stocks, self.cuts
+            
+        self.seperate_single_and_multiple_matching_cuts()
+        
+        if self.single_matching:
+            for key, matching in self.single_matching.items():
+                #print("my matching", matching[0])
+                print(self.stocks[matching[1]].length)
+                cutoff = self.stock[matching[1]].cut_stock_to_size(self.cuts[matching[0]])
+            
 
 def initialize_and_store_objects_from_dictionary(dict, class_to_call):
     object_storage = {}
@@ -140,9 +159,12 @@ if __name__ == "__main__":
     stock_objects = initialize_and_store_objects_from_dictionary(stocks, Stock_Wood)
     cut_objects = initialize_and_store_objects_from_dictionary(cuts, Desired_Cut)
 
+    
     cut_optimizer = Cut_Optimizer(cut_objects, stock_objects)
+    #call recursive function here
+    completed_cut_list, remaining_stock_after_cuts, incomplete_cuts = cut_optimizer.recursive_cut_solver()
+    
     all_matchings = cut_optimizer.find_all_possible_matchings()
-
     cut_optimizer.seperate_single_and_multiple_matching_cuts()
 
     print(cut_optimizer.single_matching)
